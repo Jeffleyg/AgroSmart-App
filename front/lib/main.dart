@@ -26,10 +26,10 @@ class AgroSmartApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
+        '/': (context) => const DashboardScreen(),
       },
     );
   }
