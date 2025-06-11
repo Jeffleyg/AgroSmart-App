@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { EmailModule } from './email/email.module';
+import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,12 +15,17 @@ import { EmailModule } from './email/email.module';
       username: 'postgres',
       password: 'root',
       database: 'user_auth',
-      entities: [User],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
     }),
+
+    ConfigModule.forRoot({
+      isGlobal: true, // <--- ESSENCIAL
+    }),
+
     UserModule,
     AuthModule,
-    EmailModule
+    DashboardModule, // Certifique-se de importar o módulo do Dashboard
   ],
 })
 export class AppModule {}
