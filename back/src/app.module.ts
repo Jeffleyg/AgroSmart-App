@@ -1,12 +1,19 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
+import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
+//import { EmailModule } from './email/email.module';
+import { WeatherModule } from './weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
 import { PlantacoesModule } from './plantacoes/plantacoes.module';
 
+import { AlertModule } from  './alert/alert.module';
+import { Alert } from './alert/alert.entity';
+import { EmailModule} from './email/email.module'; 
+import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -14,20 +21,29 @@ import { PlantacoesModule } from './plantacoes/plantacoes.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'root',
+      password: 'jean',
       database: 'user_auth',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
-    }),
+       // entities: [User], 
+      autoLoadEntities: true, // <--- ADICIONE ESTA LINHA
 
-    ConfigModule.forRoot({
-      isGlobal: true, // <--- ESSENCIAL
-    }),
+ 
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+       //synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
 
+    }),
+     HttpModule,
     UserModule,
     AuthModule,
+    EmailModule,
+    // WeatherModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    // AlertModule,
+
+    // UserModule,
+    // AuthModule,
     DashboardModule, // Certifique-se de importar o módulo do Dashboard
     PlantacoesModule
   ],
+   ],
 })
 export class AppModule {}

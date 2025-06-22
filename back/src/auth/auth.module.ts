@@ -12,6 +12,11 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { LocalStrategy } from './local.strategy';
 import { UserModule } from 'src/user/user.module';
 
+//import { EmailService } from './email.service';
+ 
+// import { AuthController } from './auth.controller';
+ 
+
 @Module({
   imports: [
     ConfigModule,
@@ -26,8 +31,16 @@ import { UserModule } from 'src/user/user.module';
       inject: [ConfigService],
     }),
   ],
+
   providers: [AuthService, LocalStrategy, JwtStrategy, LocalAuthGuard],
   controllers: [AuthController],
   exports: [AuthService],
 })
 export class AuthModule {}
+   //providers: [AuthService, EmailService],
+   //controllers: [AuthController],
+   providers: [AuthService],
+  controllers: [AuthController],
+ })
+export class AuthModule {}
+
