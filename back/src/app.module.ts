@@ -8,11 +8,12 @@ import { AuthModule } from './auth/auth.module';
 //import { EmailModule } from './email/email.module';
 import { WeatherModule } from './weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
+import { PlantacoesModule } from './plantacoes/plantacoes.module';
+
 import { AlertModule } from  './alert/alert.module';
 import { Alert } from './alert/alert.entity';
 import { EmailModule} from './email/email.module'; 
 import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
-  
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -41,6 +42,8 @@ import { DashboardModule } from './dashboard/dashboard.module'; // Importando o 
     // UserModule,
     // AuthModule,
     DashboardModule, // Certifique-se de importar o módulo do Dashboard
+    PlantacoesModule
+  ],
    ],
 })
 export class AppModule {}

@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 // src/user/user.service.ts
 import { Injectable, ConflictException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,12 +28,20 @@ export class UserService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
+      // Cria e salva o usuário
+      const user = this.userRepository.create({
+
       const newUser = this.userRepository.create({
         email,
         password: hashedPassword,
         name,
         newPassword: true, // <--- Agora é um booleano, pois a entidade foi corrigida
       });
+
+
+      const savedUser = await this.userRepository.save(user);
+
+      // Remove a senha antes de retornar
 
       // FORÇAR TIPAGEM AQUI: TypeORM.save() de uma única entidade retorna a própria entidade.
       const savedUser: User = await this.userRepository.save(newUser); // <--- CORREÇÃO AQUI: Tipagem explícita para User

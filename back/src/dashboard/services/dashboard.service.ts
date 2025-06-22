@@ -1,47 +1,30 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// src/dashboard/dashboard.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Irrigacao } from '../entities/irrigacao.entity';
 import { ClimaFetcherService } from './clima-fetcher.service';
+import { AlertService } from './alert.service';
+import { HistoricoService } from './historico.service';
 
 @Injectable()
 export class DashboardService {
-    constructor(
-        @InjectRepository(Irrigacao)
-        private irrigacaoRepo: Repository<Irrigacao>,
-        private climaService: ClimaFetcherService,
-    ) {}
+  constructor(
+    private readonly climaFetcher: ClimaFetcherService,
+    private readonly alertService: AlertService,
+    private readonly historicoService: HistoricoService,
+  ) {}
 
-    async getDashboardData() {
-  const [clima, irrigacaoData] = await Promise.all([
-    this.climaService.getClimaData(),
-    this.irrigacaoRepo.findOne({
-      where: {}, // necessário com findOne
-      order: { data: 'DESC' },
-    }),
-  ]);
+  async getDashboard(cidade: string = 'São Paulo') {
+    const climaAtual = await this.climaFetcher.getClimaData();
+    const previsao = await this.climaFetcher.getPrevisao14Dias();
+    const alertas = this.alertService.gerarAlertas(previsao);
+    const historico = await this.historicoService.listar(cidade);
 
-  return {
-    clima,
-    alertas: {
-      tipos: ['Plantação', 'Sol', 'Plantação'],
-      quantidades: [5, 2, 0],
-    },
-    metricas: [
-      {
-        irrigacao: irrigacaoData?.percentual || 50,
-        alertas: 30,
-        registro: 20,
-      },
-      {
-        irrigacao: irrigacaoData?.percentual || 50,
-        alertas: 30,
-        registro: 20,
-      },
-    ],
-    menus: ['Inicio', 'Meteo', 'Registro', 'Perfil', 'Serviços'],
-  };
-}
-
+    return {
+      climaAtual,
+      previsao,
+      alertas,
+      historico,
+    };
+  }
 }

@@ -6,7 +6,7 @@ POST {{host}}/users/register
 Content-Type: {{contentType}}
 
 {
-    "email": "variavel@test.com",
+    "email": "variavel12@test.com",
     "password": "senha123",
     "name": "Teste Variável"
 }
@@ -16,11 +16,87 @@ POST {{host}}/auth/login
 Content-Type: {{contentType}}
 
 {
-    "email": "variavel@test.com",
+    "email": "variavel12@test.com",
     "password": "senha123"
 }
+
+### Resposta
+GET  {{host}}/dashboard
+
+### Resposta
+GET {{host}}/dashboard/clima
+
+### Resposta
+GET {{host}}/dashboard/dias
+
+### Resposta
+GET {{host}}/dashboard/historico
+
+### Resposta
+GET {{host}}/dashboard/alertas
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+
+
+### Listar todas as plantações
+GET {{host}}/plantacoes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+
+
+### Criar nova plantação
+POST {{host}}/plantacoes
+Content-Type: {{contentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjUzNSwiZXhwIjoxNzUwNjIwMTM1fQ.bQ-diYys5CTMR5r4IdWQ2Z8zAI1ZAHvBYR6WWNNd38Y
+
+{
+    "nome": "Plantação de Milho",
+    "codigoPlantacao": "MILHO-005",
+    "tipoCultura": "Milho",
+    "dataInicioPlantio": "2025-06-01",
+    "dataPrevisaoColheita": "2025-09-15",
+    "dataPlantio": "2025-06-05"
+}
+
+### Criar via curl
+curl -X POST http://localhost:3000/plantacoes \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjEsImlhdCI6MTc1MDYxODAxMywiZXhwIjoxNzUwNjIxNjEzfQ.BuUAjBx4N44Ek7qMJAX1hcD2Qmnh-6nfXQoKERgW_g4" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "nome": "Plantação de Milho",
+        "codigoPlantacao": "MILHO-006",
+        "tipoCultura": "Milho2",
+        "dataInicioPlantio": "2025-06-01",
+        "dataPrevisaoColheita": "2025-09-15",
+        "dataPlantio": "2025-06-05"
+}'
+
+
+### Buscar plantação pelo código
+GET {{host}}/plantacoes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+
+
+### Atualizar plantação pelo código
+POST {{host}}/plantacoes/update
+Content-Type: {{contentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+
+{
+    "nome": "Plantação de Milho Atualizada",
+    "codigoPlantacao": "MILHO-001",
+    "tipoCultura": "Milho",
+    "dataInicioPlantio": "2025-06-02",
+    "dataPrevisaoColheita": "2025-09-16",
+    "dataPlantio": "2025-06-06"
+}
+
+### Deletar plantação pelo código
+DELETE {{host}}/plantacoes/delete/MILHO-002
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+
+
+
 
 > {% client.global.set("auth_token", response.body.access_token); %}
 ### Requisição autenticada
 GET {{host}}/profile
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
