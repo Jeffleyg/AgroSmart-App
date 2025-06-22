@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,7 +23,7 @@ export class UserService {
       // Cria o hash da senha
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      
+
       // Cria e salva o usuário
       const user = this.userRepository.create({
         email,
@@ -31,7 +32,7 @@ export class UserService {
       });
 
       const savedUser = await this.userRepository.save(user);
-      
+
       // Remove a senha antes de retornar
       const { password: _, ...userWithoutPassword } = savedUser;
       return userWithoutPassword;

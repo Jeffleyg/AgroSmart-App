@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
 import { ConfigModule } from '@nestjs/config';
+import { PlantacoesModule } from './plantacoes/plantacoes.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     AuthModule,
     DashboardModule, // Certifique-se de importar o módulo do Dashboard
+    PlantacoesModule
   ],
 })
 export class AppModule {}
