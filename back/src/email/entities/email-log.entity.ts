@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/email/entities/email-log.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 

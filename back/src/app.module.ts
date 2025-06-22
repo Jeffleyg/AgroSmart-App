@@ -1,19 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-//import { EmailModule } from './email/email.module';
-import { WeatherModule } from './weather/weather.module';
+import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
 import { ConfigModule } from '@nestjs/config';
 import { PlantacoesModule } from './plantacoes/plantacoes.module';
+import { EmailModule } from './email/email.module';
+import { HttpModule } from '@nestjs/axios';
 
-import { AlertModule } from  './alert/alert.module';
-import { Alert } from './alert/alert.entity';
-import { EmailModule} from './email/email.module'; 
-import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,29 +18,23 @@ import { DashboardModule } from './dashboard/dashboard.module'; // Importando o 
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'jean',
+      password: 'root',
       database: 'user_auth',
-       // entities: [User], 
-      autoLoadEntities: true, // <--- ADICIONE ESTA LINHA
-
- 
-      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
-       //synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
-
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
     }),
-     HttpModule,
+
+    ConfigModule.forRoot({
+      isGlobal: true, // <--- ESSENCIAL
+    }),
+
     UserModule,
+    HttpModule,
     AuthModule,
     EmailModule,
-    // WeatherModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    // AlertModule,
-
-    // UserModule,
-    // AuthModule,
     DashboardModule, // Certifique-se de importar o módulo do Dashboard
-    PlantacoesModule
+    PlantacoesModule,
+    // SchedulerModule.forRoot(), // Importando o módulo de agendamento se necessário
   ],
-   ],
 })
 export class AppModule {}

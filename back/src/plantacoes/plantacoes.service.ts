@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 // src/plantacoes/plantacoes.service.ts
@@ -7,35 +9,55 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Plantacao } from './entities/plantacao.entity';
 import { CreatePlantacaoDto } from './dto/create-plantacao.dto';
+import { EmailService } from 'src/email/email.service';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class PlantacoesService {
+    [x: string]: any;
     constructor(
         @InjectRepository(Plantacao)
         private readonly plantacaoRepo: Repository<Plantacao>,
+        private readonly emailService: EmailService, // Supondo que você tenha um serviço de email
+        @InjectRepository(User)
+        private readonly userRepo: Repository<User>, // Repositório de usuários para buscar o e-mail
     ) {}
 
     async create(dto: CreatePlantacaoDto, userId: number) {
         const plantacao = this.plantacaoRepo.create({
-        ...dto,
-        userId ,
+            ...dto,
+            userId,
         });
+
         try {
-        return await this.plantacaoRepo.save(plantacao);
+            const savedPlantacao = await this.plantacaoRepo.save(plantacao);
+
+            const user = await this.userRepo.findOne({ where: { id: userId } });
+
+            if (!user) {
+                throw new NotFoundException('Usuário não encontrado');
+            }
+
+            await this.emailService.sendEmail({
+            to: user.email,
+            subject: 'Nova plantação registrada',
+            html: `<p>Olá ${user.name}, sua plantação <strong>${dto.nome}</strong> foi cadastrada com sucesso!</p>`,
+            });
+
+            return savedPlantacao;
         } catch (err) {
-        // Se for violação de unicidade composta (userId+codigoPlantacao)
-        if (
-            err instanceof QueryFailedError &&
-            (err as any).code === '23505'
-        ) {
-            throw new ConflictException(
-            `Você já possui uma plantação com o código "${dto.codigoPlantacao}".`,
-            );
-        }
-        // repassa outros erros
-        throw err;
+            if (
+                err instanceof QueryFailedError &&
+                (err as any).code === '23505'
+            ) {
+                throw new ConflictException(
+                    `Você já possui uma plantação com o código "${dto.codigoPlantacao}".`,
+                );
+            }
+            throw err;
         }
     }
+
 
     async findAllByUser(userId: number) {
         return this.plantacaoRepo.find({
@@ -63,14 +85,26 @@ export class PlantacoesService {
         codigoPlantacao: string,
         dto: CreatePlantacaoDto,
         userId: number,
-    ) {
-        const plantacao = await this.ensureOwnership(
-        codigoPlantacao,
-        userId,
-        );
+        ) {
+        const plantacao = await this.ensureOwnership(codigoPlantacao, userId);
+
         Object.assign(plantacao, dto);
-        return this.plantacaoRepo.save(plantacao);
+        const updated = await this.plantacaoRepo.save(plantacao);
+
+        // Buscar o usuário para pegar o e-mail
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+
+        if (user) {
+            await this.emailService.sendEmail({
+            to: user.email,
+            subject: 'Plantação atualizada com sucesso',
+            html: `<p>Olá ${user.name}, a plantação <strong>${dto.nome}</strong> foi atualizada com sucesso.</p>`,
+            });
+        }
+
+        return updated;
     }
+
 
     async deleteByCodigoPlantacao(
         codigoPlantacao: string,
