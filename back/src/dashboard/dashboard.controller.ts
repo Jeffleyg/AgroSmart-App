@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { DashboardService } from './services/dashboard.service';
 import { ClimaFetcherService } from './services/clima-fetcher.service'; // Importing the ClimaFetcherService
 import { AlertService } from './services/alert.service';
 import { HistoricoService } from './services/historico.service'; // Importing the HistoricoService
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -17,9 +20,11 @@ export class DashboardController {
 
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getData() {
-    return this.dashboardService.getDashboard();
+  async getData(@Query('cidade') cidade: string, @Request() req) {
+    const user = req.user;
+    return this.dashboardService.getDashboard(cidade, user.email, user.name);
   }
 
   @Get('clima')

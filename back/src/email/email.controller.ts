@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable prettier/prettier */
 // src/email/email.controller.ts
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { EmailService } from './email.service'; // <-- IMPORTE SEU EmailService
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EmailResponseDto } from './dto/email-response.dto'; // <--- IMPORTE O DTO DE RESPOSTA (se você criou)
 import { SendEmailDto } from './dto/send-email.dto';  // <--- Se você tem um DTO específico para entrada, importe-o
-
- 
 
 @ApiTags('Email')
 @Controller('email')
@@ -22,7 +23,7 @@ export class EmailController {
       const success = await this.emailService.sendEmail(sendEmailDto); // Seu EmailService retorna boolean
 
       if (success) {
-        console.log(`✅ E-mail de teste enviado para ${sendEmailDto.to} com sucesso!`);
+        //console.log(`✅ E-mail de teste enviado para ${sendEmailDto.to} com sucesso!`);
         return { success: true, message: 'E-mail enviado com sucesso!' };
       } else {
         // Se o emailService retornar false, significa que a falha já foi logada internamente.

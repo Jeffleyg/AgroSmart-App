@@ -23,7 +23,7 @@ export class HistoricoService {
             tempMin: dia.temperaturaMin,
             tempMax: dia.temperaturaMax,
             chuva: dia.chuva,
-            condicao: dia.condicao.toString(),
+            condicao: (dia.condicao ?? 'Desconhecida').toString(),
         });
         return historico;
         });

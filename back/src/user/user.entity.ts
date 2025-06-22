@@ -17,7 +17,7 @@ export class User {
   password: string;
 
   @Column({ default: false })
-  newPassword: boolean; // <--- CORREÇÃO AQUI: O tipo deve ser 'boolean'
+  newPassword: string;
 
   // Adicione estes dois campos:
   @Column({ name: 'reset_token', nullable: true }) // Coluna opcional
