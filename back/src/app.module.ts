@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
@@ -9,10 +10,10 @@ import { WeatherModule } from './weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
 import { AlertModule } from  './alert/alert.module';
 import { Alert } from './alert/alert.entity';
-import { EmailModule} from './email/email.module';
-
-
-
+import { EmailModule} from './email/email.module'; 
+import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
+import { ConfigModule } from '@nestjs/config';
+ 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,12 +23,15 @@ import { EmailModule} from './email/email.module';
       username: 'postgres',
       password: 'jean',
       database: 'user_auth',
-      // entities: [User], 
+       // entities: [User], 
       autoLoadEntities: true, // <--- ADICIONE ESTA LINHA
 
-      synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
+ 
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+       //synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
 
     }),
+<<<<<<< HEAD
     HttpModule,
     UserModule,
     AuthModule,
@@ -36,6 +40,9 @@ import { EmailModule} from './email/email.module';
     ConfigModule.forRoot({ isGlobal: true }),
     // AlertModule,
 
-  ],
+    // UserModule,
+    // AuthModule,
+    DashboardModule, // Certifique-se de importar o módulo do Dashboard
+   ],
 })
 export class AppModule {}
