@@ -55,43 +55,47 @@ class AuthService {
   // }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email': email,
-        'password': password,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
 
-    final responseData = json.decode(response.body);
+      final responseData = json.decode(response.body);
 
-    // Tratamento unificado de respostas
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (responseData['access_token'] != null) {
-        await _storage.write(key: 'access_token', value: responseData['access_token']);
+      // Tratamento unificado de respostas
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (responseData['access_token'] != null) {
+          await _storage.write(
+            key: 'access_token',
+            value: responseData['access_token'],
+          );
+          return {
+            'success': true,
+            'token': responseData['access_token'],
+            'user': responseData['user'],
+          };
+        }
+        return {'success': false, 'message': 'Resposta inválida do servidor'};
+      } else {
         return {
-          'success': true,
-          'token': responseData['access_token'],
-          'user': responseData['user']
+          'success': false,
+          'message': responseData['message'] ?? 'Erro desconhecido',
         };
       }
-      return {
-        'success': false,
-        'message': 'Resposta inválida do servidor'
-      };
-    } else {
-      return {
-        'success': false,
-        'message': responseData['message'] ?? 'Erro desconhecido'
-      };
+    } catch (e) {
+      return {'success': false, 'message': 'Erro de conexão: ${e.toString()}'};
     }
-  } catch (e) {
-    return {
-      'success': false,
-      'message': 'Erro de conexão: ${e.toString()}'
-    };
   }
-}
+
+  Future<bool> isLoggedIn() async {
+    final token = await _storage.read(key: 'access_token');
+    return token != null;
+  }
+
+  Future<void> logout() async {
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'user_data');
+  }
 }

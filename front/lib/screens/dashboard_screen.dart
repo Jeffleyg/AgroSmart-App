@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'auth_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = AuthService();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -45,10 +47,26 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Icon(
-                        Icons.notifications_none,
-                        color: Color.fromRGBO(0, 128, 0, 1),
-                        size: 28,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.notifications_none,
+                            color: Color.fromRGBO(0, 128, 0, 1),
+                            size: 28,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.logout),
+                            color: const Color.fromRGBO(0, 128, 0, 1),
+                            onPressed: () async {
+                              await authService.logout();
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                '/login',
+                                (route) => false,
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -80,80 +98,29 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Placeholder para gráfico/metas
-                Container(
-                  height: 50,
-                  color: Colors.grey[300],
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                ),
-                // Alertas
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(255, 177, 69, 1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Alertas',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(0, 128, 0, 1),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: const [
-                          _AlertInfo(title: 'Plantação', value: '5'),
-                          _AlertInfo(title: 'Sol', value: '2'),
-                          _AlertInfo(title: 'Plantação', value: '0'),
+                // Placeholder para gráfico/metas e Alertas em um layout responsivo
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Se a tela for larga (web/tablet), usar uma linha
+                    if (constraints.maxWidth > 600) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(flex: 2, child: _buildAlertsCard(context)),
+                          const SizedBox(width: 16),
+                          Expanded(flex: 3, child: _buildChartCard()),
                         ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Gráfico e porcentagens
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(177, 237, 179, 1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Irrigação: 50%\nAlertas: 30%\nRegistro: 20%',
-                        style: TextStyle(color: Color.fromRGBO(0, 128, 0, 1)),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: 300,
-                        height: 200,
-                        child: LineChart(
-                          LineChartData(
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: [
-                                  FlSpot(0, 1),
-                                  FlSpot(2, 4),
-                                  FlSpot(3, 2),
-                                  FlSpot(4, 5),
-                                ],
-                                isCurved: true,
-                                color: Colors.blue,
-                                dotData: FlDotData(show: false),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+                    // Se for estreita (mobile), usar uma coluna
+                    return Column(
+                      children: [
+                        _buildAlertsCard(context),
+                        const SizedBox(height: 16),
+                        _buildChartCard(),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -163,6 +130,25 @@ class DashboardScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: const Color.fromRGBO(0, 128, 0, 1),
         unselectedItemColor: Color.fromRGBO(76, 175, 80, 1),
+        currentIndex: 0,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/meteo');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/monitoramento-plantacao');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/perfil');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/cadastro-plantacao');
+              break;
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(
@@ -180,6 +166,116 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // Widget para o card de Alertas
+  Widget _buildAlertsCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/alertas/plantacao');
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(255, 177, 69, 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Alertas',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(0, 128, 0, 1),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildAlertInfo(
+                  context,
+                  title: 'Plantação',
+                  value: '5',
+                  route: '/alertas/plantacao',
+                ),
+                _buildAlertInfo(
+                  context,
+                  title: 'Sol',
+                  value: '2',
+                  route: '/alertas/sol',
+                ),
+                _buildAlertInfo(
+                  context,
+                  title: 'Irrigação',
+                  value: '2',
+                  route: '/alertas/irrigacao',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget para o card do Gráfico
+  Widget _buildChartCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(177, 237, 179, 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          const Text(
+            'Irrigação: 50%\nAlertas: 30%\nRegistro: 20%',
+            style: TextStyle(color: Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          const SizedBox(width: 8), // Adicionado para espaçamento
+          Expanded(
+            child: SizedBox(
+              height: 150, // Altura ajustada
+              child: LineChart(
+                LineChartData(
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: const [
+                        FlSpot(0, 1),
+                        FlSpot(2, 4),
+                        FlSpot(3, 2),
+                        FlSpot(4, 5),
+                      ],
+                      isCurved: true,
+                      color: Colors.blue,
+                      dotData: const FlDotData(show: false),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para cada item de alerta
+  Widget _buildAlertInfo(
+    BuildContext context, {
+    required String title,
+    required String value,
+    required String route,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, route);
+      },
+      child: _AlertInfo(title: title, value: value),
     );
   }
 }
@@ -204,26 +300,49 @@ class _WeatherDay extends StatelessWidget {
   }
 }
 
-class _AlertInfo extends StatelessWidget {
+class _AlertInfo extends StatefulWidget {
   final String title;
   final String value;
   const _AlertInfo({required this.title, required this.value});
 
   @override
+  State<_AlertInfo> createState() => _AlertInfoState();
+}
+
+class _AlertInfoState extends State<_AlertInfo> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(title, style: const TextStyle(color: Colors.green)),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+    final scale = _isHovered ? 1.1 : 1.0;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: Matrix4.identity()..scale(scale),
+        transformAlignment: Alignment.center,
+        child: Column(
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              widget.value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
