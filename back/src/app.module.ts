@@ -1,9 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
+import { ConfigModule } from '@nestjs/config';
+import { PlantacoesModule } from './plantacoes/plantacoes.module';
 import { EmailModule } from './email/email.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -14,12 +20,21 @@ import { EmailModule } from './email/email.module';
       username: 'postgres',
       password: 'root',
       database: 'user_auth',
-      entities: [User],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
     }),
+
+    ConfigModule.forRoot({
+      isGlobal: true, // <--- ESSENCIAL
+    }),
+
     UserModule,
+    HttpModule,
     AuthModule,
-    EmailModule
+    EmailModule,
+    DashboardModule, // Certifique-se de importar o módulo do Dashboard
+    PlantacoesModule,
+    // SchedulerModule.forRoot(), // Importando o módulo de agendamento se necessário
   ],
 })
 export class AppModule {}

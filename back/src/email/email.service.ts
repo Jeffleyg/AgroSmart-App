@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
@@ -9,7 +14,7 @@ import { TEMPLATES } from './constants/email-templates.const';
 
 @Injectable()
 export class EmailService {
-  private transporter;
+  private transporter: nodemailer.Transporter;
   private readonly logger = new Logger(EmailService.name);
 
   constructor(
@@ -22,45 +27,65 @@ export class EmailService {
 
   private initTransport() {
     this.transporter = nodemailer.createTransport({
-      host: this.configService.get('EMAIL_HOST'),
-      port: this.configService.get('EMAIL_PORT'),
-      secure: this.configService.get('EMAIL_SECURE'),
+      host: this.configService.get<string>('EMAIL_HOST'),
+      port: this.configService.get<number>('EMAIL_PORT'),
+      secure: this.configService.get<boolean>('EMAIL_SECURE'), // Geralmente false para 587, true para 465
       auth: {
-        user: this.configService.get('EMAIL_USER'),
-        pass: this.configService.get('EMAIL_PASS'),
+        user: this.configService.get<string>('EMAIL_USER'),
+        pass: this.configService.get<string>('EMAIL_PASS'),
       },
+      tls: {
+        // <--- ADICIONE ESTA SEÇÃO AQUI
+        rejectUnauthorized: false // <--- DESABILITA A VALIDAÇÃO DE CERTIFICADO (APENAS PARA DEV/DEBUG!)
+      }
     });
   }
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
+    let finalHtmlContent: string | undefined;
+
+    const initialLog = this.emailLogRepository.create({
+      to: options.to,
+      subject: options.subject,
+      templateName: options.template,
+      templateContext: options.context,
+      body: options.html,
+      status: 'pending',
+    });
+    await this.emailLogRepository.save(initialLog);
+
     try {
+      if (options.template) {
+        finalHtmlContent = this.renderTemplate(options.template, options.context || {});
+      } else if (options.html) {
+        finalHtmlContent = options.html;
+      } else {
+        throw new Error('Neither HTML content nor template specified for email.');
+      }
+
       const mailOptions = {
-        from: options.from || this.configService.get('EMAIL_FROM'),
+        from: options.from || this.configService.get<string>('EMAIL_FROM'),
         to: options.to,
         subject: options.subject,
-        html: this.renderTemplate(options.template, options.context),
+        html: finalHtmlContent,
       };
 
       await this.transporter.sendMail(mailOptions);
-      
-      await this.logEmail({
-        to: options.to,
-        subject: options.subject,
-        template: options.template,
-        status: 'success',
-      });
 
+      initialLog.status = 'success';
+      initialLog.body = finalHtmlContent ?? '';
+      await this.emailLogRepository.save(initialLog);
+
+      this.logger.log(`Email sent successfully to ${options.to}`);
       return true;
-    } catch (error) {
-      this.logger.error(`Failed to send email: ${error.message}`);
-      
-      await this.logEmail({
-        to: options.to,
-        subject: options.subject,
-        template: options.template,
-        status: 'failed',
-        error: error.message,
-      });
+
+    } catch (error: any) {
+      this.logger.error(`Failed to send email to ${options.to}: ${error.message}`);
+
+      initialLog.status = 'failed';
+      initialLog.error = error.message;
+      initialLog.body = finalHtmlContent ?? '';
+      await this.emailLogRepository.save(initialLog);
 
       return false;
     }
@@ -68,18 +93,15 @@ export class EmailService {
 
   private renderTemplate(templateName: string, context: object = {}): string {
     const template = TEMPLATES[templateName];
-    if (!template) throw new Error(`Template ${templateName} not found`);
+    if (!template) {
+      this.logger.error(`Template "${templateName}" not found in TEMPLATES constant.`);
+      throw new Error(`Template "${templateName}" not found.`);
+    }
 
     return Object.entries(context).reduce(
-      (html, [key, value]) => 
-        html.replace(new RegExp(`{{${key}}}`, 'g'), value),
+      (html, [key, value]) =>
+        html.replace(new RegExp(`{{${key}}}`, 'g'), String(value)),
       template
     );
   }
-
-    private async logEmail(logData: Partial<EmailLog>): Promise<void> {
-    await this.emailLogRepository.save(
-        this.emailLogRepository.create(logData)
-    );
-    }
 }

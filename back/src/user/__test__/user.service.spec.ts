@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user.entity';
@@ -44,7 +48,7 @@ describe('UserService', () => {
       jest.spyOn(bcrypt, 'hash' as any).mockResolvedValue('hashedpassword');
 
       const result = await service.createUser('test@example.com', 'password123', 'Test User');
-      
+
       expect(result).toEqual({
         email: 'test@example.com',
         name: 'Test User',

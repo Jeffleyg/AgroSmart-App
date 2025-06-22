@@ -1,5 +1,6 @@
-// send-email.dto.ts
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+// src/email/dto/send-email.dto.ts
+
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class SendEmailDto {
   @IsEmail()
@@ -9,15 +10,18 @@ export class SendEmailDto {
   @IsNotEmpty()
   subject: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  template: string;
+  html?: string;
 
+  @IsOptional()
+  @IsString()
+  template?: string;
+
+  @IsOptional()
   context?: Record<string, any>;
-}
 
-// email-response.dto.ts
-export class EmailResponseDto {
-    success: boolean;
-    message: string;
+  @IsOptional()
+  @IsEmail()
+  from?: string;
 }
