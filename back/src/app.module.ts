@@ -12,8 +12,7 @@ import { AlertModule } from  './alert/alert.module';
 import { Alert } from './alert/alert.entity';
 import { EmailModule} from './email/email.module'; 
 import { DashboardModule } from './dashboard/dashboard.module'; // Importando o módulo do Dashboard
-import { ConfigModule } from '@nestjs/config';
- 
+  
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -31,8 +30,7 @@ import { ConfigModule } from '@nestjs/config';
        //synchronize: true, // ATENÇÃO: usar apenas em desenvolvimento
 
     }),
-<<<<<<< HEAD
-    HttpModule,
+     HttpModule,
     UserModule,
     AuthModule,
     EmailModule,
