@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // src/plantacoes/plantacoes.controller.ts
 /* eslint-disable prettier/prettier */
@@ -33,7 +36,6 @@ export class PlantacoesController {
         req.user.userId,
         );
     }
-    
 
     @Get()
     findAll(
@@ -65,6 +67,17 @@ export class PlantacoesController {
         return this.plantacoesService.deleteByCodigoPlantacao(
         codigoPlantacao,
         req.user.userId,
+        );
+    }
+
+    @Get('historico')
+    getHistorico(
+        @Request() req,
+        //@Query() filters: HistoricoPlantacaoDto,
+    ) {
+        return this.plantacoesService.getHistoricoCompleto(
+        req.user.userId,
+        //filters,
         );
     }
 }

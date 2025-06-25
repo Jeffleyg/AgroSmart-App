@@ -27,6 +27,10 @@ export class UserController {
       throw new BadRequestException('A senha deve ter pelo menos 6 caracteres');
     }
 
-    return this.userService.createUser(email, password, name);
+    // if (password !== confirmedPassword) {
+    //   throw new BadRequestException('As senhas não coincidem');
+    // }
+
+    return this.userService.createUser(email, password, name,);
   }
 }

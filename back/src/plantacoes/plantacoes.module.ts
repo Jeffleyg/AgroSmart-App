@@ -7,11 +7,12 @@ import { PlantacoesController } from './plantacoes.controller';
 import { UserModule } from 'src/user/user.module';
 import { EmailModule } from '../email/email.module';
 import { User } from 'src/user/user.entity';
+import { MonitoramentoModule } from 'src/monitoramento/monitoramento.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Plantacao, User]),
         // Importando o módulo de usuário para injeção de dependência
-        UserModule, EmailModule],
+        UserModule, EmailModule, MonitoramentoModule],
     controllers: [PlantacoesController],
     providers: [PlantacoesService],
 })

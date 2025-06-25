@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/email/constants/email-templates.const.ts
 export const TEMPLATES = {
   'welcome': `
