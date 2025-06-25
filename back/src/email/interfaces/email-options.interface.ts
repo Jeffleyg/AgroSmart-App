@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/email/interfaces/email-options.interface.ts
 export interface EmailOptions { // <-- Garanta que tem "export interface"
   to: string;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/forgot_password_screen.dart';
@@ -15,9 +16,17 @@ import 'screens/suporte_screen.dart';
 import 'screens/feedback_screen.dart';
 import 'screens/tutorial_screen.dart';
 import 'screens/auth_wrapper.dart';
+import 'providers/auth_provider.dart'; // Adicione esta importação
 
 void main() {
-  runApp(const AgroSmartApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const AgroSmartApp(),
+    ),
+  );
 }
 
 class AgroSmartApp extends StatelessWidget {

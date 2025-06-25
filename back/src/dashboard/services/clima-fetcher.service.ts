@@ -53,7 +53,7 @@ export class ClimaFetcherService {
         };
     }
 
-    async getPrevisao14Dias(cidade: string = 'São Paulo') {
+    async getPrevisao14Dias(cidade: string = 'Chapecó'): Promise<any[]> {
     const response = await firstValueFrom(
         this.httpService.get('https://api.tomorrow.io/v4/weather/forecast', {
             params: {

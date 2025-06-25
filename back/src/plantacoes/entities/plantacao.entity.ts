@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable prettier/prettier */
 // src/plantacoes/entities/plantacao.entity.ts
+import { Monitoramento } from 'src/monitoramento/entities/monitoramento.entity';
 import { User } from 'src/user/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Index, OneToMany } from 'typeorm';
 
 @Entity('plantacoes')
 @Index(['userId', 'codigoPlantacao'], { unique: true }) // Garante que o código da plantação seja único
@@ -36,4 +37,7 @@ export class Plantacao {
 
     @Column({nullable: true})
     userId: number;
+
+    @OneToMany(() => Monitoramento, monitoramento => monitoramento.plantacao)
+    monitoramentos: Monitoramento[];
 }

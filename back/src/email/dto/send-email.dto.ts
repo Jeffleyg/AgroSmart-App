@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/email/dto/send-email.dto.ts
 
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';

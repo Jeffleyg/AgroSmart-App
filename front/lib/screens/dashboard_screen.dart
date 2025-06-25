@@ -37,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            'Olá, Teresa',
+                            'Olá Seja Bem-vindo(a)',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

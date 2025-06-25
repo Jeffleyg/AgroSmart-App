@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable prettier/prettier */
 // src/email/email.controller.ts
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
@@ -23,7 +22,7 @@ export class EmailController {
       const success = await this.emailService.sendEmail(sendEmailDto); // Seu EmailService retorna boolean
 
       if (success) {
-        //console.log(`✅ E-mail de teste enviado para ${sendEmailDto.to} com sucesso!`);
+        console.log(`✅ E-mail de teste enviado para ${sendEmailDto.to} com sucesso!`);
         return { success: true, message: 'E-mail enviado com sucesso!' };
       } else {
         // Se o emailService retornar false, significa que a falha já foi logada internamente.

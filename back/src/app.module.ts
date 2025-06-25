@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PlantacoesModule } from './plantacoes/plantacoes.module';
 import { EmailModule } from './email/email.module';
 import { HttpModule } from '@nestjs/axios';
+import { MonitoramentoModule } from './monitoramento/monitoramento.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { HttpModule } from '@nestjs/axios';
     EmailModule,
     DashboardModule, // Certifique-se de importar o módulo do Dashboard
     PlantacoesModule,
+    MonitoramentoModule, // Importando o módulo de monitoramento
     // SchedulerModule.forRoot(), // Importando o módulo de agendamento se necessário
   ],
 })

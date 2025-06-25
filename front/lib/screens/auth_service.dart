@@ -1,101 +1,67 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthService {
-  // Para web, use localhost ou seu IP real
-  static const String _baseUrl = 'http://localhost:3000/auth';
+  static const String _baseUrl = 'http://localhost:3000'; // Para emulador Android
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-
-  // Future<Map<String, dynamic>> login(String email, String password) async {
-  //   try {
-  //     final uri = Uri.parse('$_baseUrl/login');
-  //     print('Making request to: $uri'); // Debug
-
-  //     final response = await http.post(
-  //       uri,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //       },
-  //       body: json.encode({
-  //         'email': email,
-  //         'password': password,
-  //       }),
-  //     ).timeout(const Duration(seconds: 10));
-
-  //     print('Response status: ${response.statusCode}'); // Debug
-  //     print('Response body: ${response.body}'); // Debug
-
-  //     final responseData = json.decode(response.body);
-
-  //     if (response.statusCode == 200) {
-  //       if (responseData['access_token'] != null) {
-  //         await _storage.write(
-  //           key: 'access_token',
-  //           value: responseData['access_token']
-  //         );
-  //         await _storage.write(
-  //           key: 'user_data',
-  //           value: json.encode(responseData['user'])
-  //         );
-  //         return {'success': true, 'user': responseData['user']};
-  //       }
-  //       return {'success': false, 'message': 'Token não recebido'};
-  //     } else {
-  //       return {
-  //         'success': false,
-  //         'message': responseData['message'] ?? 'Erro no login'
-  //       };
-  //     }
-  //   } catch (e) {
-  //     print('Login error: $e'); // Debug
-  //     return {'success': false, 'message': 'Erro: ${e.toString()}'};
-  //   }
-  // }
+  
+  
+  // Adicione esta variável para manter o estado em memória
+  String? _token;
+  Map<String, dynamic>? _userData;
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/login'),
+        Uri.parse('$_baseUrl/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
       );
 
-      final responseData = json.decode(response.body);
-
-      // Tratamento unificado de respostas
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        if (responseData['access_token'] != null) {
-          await _storage.write(
-            key: 'access_token',
-            value: responseData['access_token'],
-          );
-          return {
-            'success': true,
-            'token': responseData['access_token'],
-            'user': responseData['user'],
-          };
-        }
-        return {'success': false, 'message': 'Resposta inválida do servidor'};
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body);
+        _token = data['access_token'];
+        _userData = data['user'] ?? {'email': email};
+        
+        // Armazena token e dados do usuário
+        await _storage.write(key: 'auth_token', value: _token);
+        await _storage.write(key: 'user_data', value: json.encode(_userData));
+        
+        return {'success': true, 'token': _token, 'user': _userData};
       } else {
-        return {
-          'success': false,
-          'message': responseData['message'] ?? 'Erro desconhecido',
-        };
+        return {'success': false, 'message': 'Erro no login'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Erro de conexão: ${e.toString()}'};
+      return {'success': false, 'message': e.toString()};
     }
   }
 
+  Future<void> initialize() async {
+    // Carrega o token ao iniciar o app
+    _token = await _storage.read(key: 'auth_token');
+    final userDataString = await _storage.read(key: 'user_data');
+    if (userDataString != null) {
+      _userData = json.decode(userDataString);
+    }
+  }
+
+  Future<String?> getToken() async {
+    _token ??= await _storage.read(key: 'auth_token');
+    return _token;
+  }
+
   Future<bool> isLoggedIn() async {
-    final token = await _storage.read(key: 'access_token');
-    return token != null;
+    return await getToken() != null;
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'access_token');
+    _token = null;
+    _userData = null;
+    await _storage.delete(key: 'auth_token');
     await _storage.delete(key: 'user_data');
   }
+
+  String? get userEmail => _userData?['email'];
+  String? get userName => _userData?['name'] ?? 'Usuário';
 }

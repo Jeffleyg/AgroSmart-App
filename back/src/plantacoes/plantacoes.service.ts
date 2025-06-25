@@ -117,4 +117,37 @@ export class PlantacoesService {
         await this.plantacaoRepo.remove(plantacao);
         return { deleted: true };
     }
+
+    async getHistoricoCompleto(userId: number) {
+        const plantacoes = await this.plantacaoRepo.find({
+            where: { user: { id: userId } },
+            relations: ['monitoramentos'], // Carrega os monitoramentos relacionados
+            order: {
+                criadoEm: 'DESC',
+                monitoramentos: { dataHora: 'DESC' } // Ordena monitoramentos por data
+            }
+        });
+
+        return plantacoes.map(plantacao => ({
+            id: plantacao.id,
+            nome: plantacao.nome,
+            codigoPlantacao: plantacao.codigoPlantacao,
+            tipoCultura: plantacao.tipoCultura,
+            dataPlantio: plantacao.dataPlantio,
+            monitoramentos: plantacao.monitoramentos?.map(monitor => ({
+                id: monitor.id,
+                umidadeSolo: monitor.umidadeSolo,
+                estadoPlantas: monitor.estadoPlantas,
+                dataHora: monitor.dataHora,
+                status: this.determinarStatus(monitor.estadoPlantas)
+            })) || []
+        }));
+    }
+
+    private determinarStatus(estadoPlantas: string): 'success' | 'warning' {
+        const estadosNegativos = ['doente', 'pragas', 'seca', 'estress'];
+        return estadosNegativos.some(estado =>
+            estadoPlantas.toLowerCase().includes(estado)
+        ) ? 'warning' : 'success';
+    }
 }

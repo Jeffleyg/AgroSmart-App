@@ -6,9 +6,10 @@ POST {{host}}/users/register
 Content-Type: {{contentType}}
 
 {
-    "email": "jeffleygarcon007@gmail.com",
+    "name": "Linedy Elmius",
+    "email": "linedyelmius87@gmail.com",
     "password": "senha123",
-    "name": "Teste Variável"
+    "confirmPassword": "senha123"
 }
 
 ###
@@ -16,13 +17,36 @@ POST {{host}}/auth/login
 Content-Type: {{contentType}}
 
 {
-    "email": "jeffleygarcon0@gmail.com",
+    "email": "linedyelmius87@gmail.com",
     "password": "senha123"
 }
 
+### 1. HISTÓRICO COMPLETO DE PLANTAÇÕES (com monitoramentos)
+GET {{host}}/plantacoes/historico
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbmVkeWVsbWl1czg3QGdtYWlsLmNvbSIsInN1YiI6MTQsImlhdCI6MTc1MDgwMjk5NCwiZXhwIjoxNzUwODA2NTk0fQ.BhBnQrM2fACOlwXohhJYSeM4Ez5YeqCs6neCAggghhM
+
+### 3. CRIAR NOVO REGISTRO DE MONITORAMENTO
+POST {{host}}/monitoramento
+Content-Type: {{contentType}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbmVkeWVsbWl1czg3QGdtYWlsLmNvbSIsInN1YiI6MTQsImlhdCI6MTc1MDgwMjk5NCwiZXhwIjoxNzUwODA2NTk0fQ.BhBnQrM2fACOlwXohhJYSeM4Ez5YeqCs6neCAggghhM
+
+{
+    "umidadeSolo": 68,
+    "estadoPlantas": "saudável",
+    "observacoes": "Plantação está bem irrigada após a chuva.",
+    "plantacaoId": "82fe4773-b3d6-45eb-88d2-38b8b4460bcc"
+}
+
+### 4. ÚLTIMO REGISTRO DE MONITORAMENTO
+GET {{host}}/monitoramento/ultimo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
+### 5. HISTÓRICO DE MONITORAMENTOS
+GET {{host}}/monitoramento/historico
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbmVkeWVsbWl1czg3QGdtYWlsLmNvbSIsInN1YiI6MTQsImlhdCI6MTc1MDgwMjk5NCwiZXhwIjoxNzUwODA2NTk0fQ.BhBnQrM2fACOlwXohhJYSeM4Ez5YeqCs6neCAggghhM
+
 ### Resposta
 GET  {{host}}/dashboard
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZsZXlnYXJjb24wQGdtYWlsLmNvbSIsInN1YiI6MSwiaWF0IjoxNzUwNjMwODUwLCJleHAiOjE3NTA2MzQ0NTB9.g1b0_tETrmmEVJDs9LKKLeQV4LaxF_h2PfLfJU87JPI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpbmVkeWVsbWl1czg3QGdtYWlsLmNvbSIsInN1YiI6MTQsImlhdCI6MTc1MDgwNzk5MCwiZXhwIjoxNzUwODExNTkwfQ.34CUpmHpg5AH5ROjCn1qJ1FQylfQtOR5o42Hys3iVVE
 
 ### Resposta
 GET {{host}}/dashboard/clima
@@ -35,21 +59,22 @@ GET {{host}}/dashboard/historico
 
 ### Resposta
 GET {{host}}/dashboard/alertas
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
 
 
 ### Listar todas as plantações
 GET {{host}}/plantacoes
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZsZXlnYXJjb24wQGdtYWlsLmNvbSIsInN1YiI6MSwiaWF0IjoxNzUwNjI3Njc2LCJleHAiOjE3NTA2MzEyNzZ9.im0OlWqd_csj0ZyOZuDbO0d-VV6N3EZzVqz4A2ss3JU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA2NDM3MTIsImV4cCI6MTc1MDY0NzMxMn0.uO13PRBU9fBBebI1umrwPCY3gRcYDNuvEjbA3FAiPII
+
 
 ### Criar nova plantação
 POST {{host}}/plantacoes
 Content-Type: {{contentType}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZsZXlnYXJjb24wQGdtYWlsLmNvbSIsInN1YiI6MSwiaWF0IjoxNzUwNjI3Njc2LCJleHAiOjE3NTA2MzEyNzZ9.im0OlWqd_csj0ZyOZuDbO0d-VV6N3EZzVqz4A2ss3JU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
 
 {
     "nome": "Plantação de Milho",
-    "codigoPlantacao": "MILHO-0000",
+    "codigoPlantacao": "MILHO-0098",
     "tipoCultura": "Milho",
     "dataInicioPlantio": "2025-06-01",
     "dataPrevisaoColheita": "2025-09-15",
@@ -62,7 +87,7 @@ curl -X POST http://localhost:3000/plantacoes \
     -H "Content-Type: application/json" \
     -d '{
         "nome": "Plantação de Milho",
-        "codigoPlantacao": "MILHO-011",
+        "codigoPlantacao": "MILHO-006",
         "tipoCultura": "Milho2",
         "dataInicioPlantio": "2025-06-01",
         "dataPrevisaoColheita": "2025-09-15",
@@ -72,7 +97,7 @@ curl -X POST http://localhost:3000/plantacoes \
 
 ### Buscar plantação pelo código
 GET {{host}}/plantacoes
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
 
 
 ### Atualizar plantação pelo código
@@ -90,13 +115,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhd
 }
 
 ### Deletar plantação pelo código
-DELETE {{host}}/plantacoes/delete/MILHO-011
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjEsImlhdCI6MTc1MDYxODAxMywiZXhwIjoxNzUwNjIxNjEzfQ.BuUAjBx4N44Ek7qMJAX1hcD2Qmnh-6nfXQoKERgW_g4
+DELETE {{host}}/plantacoes/delete/MILHO-0092
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
 
 
 
 
 > {% client.global.set("auth_token", response.body.access_token); %}
 ### Requisição autenticada
-GET {{host}}/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcmlhdmVsMTJAdGVzdC5jb20iLCJzdWIiOjgsImlhdCI6MTc1MDYxNjY0MywiZXhwIjoxNzUwNjIwMjQzfQ.i5E5az2gDC88EWZ4MWJisr-0zL1oVGo2JITD1wWcrVk
+GET {{host}}/me/perfile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImplZmZseWdhcmNvbjAwMDdAZ21haWwuY29tIiwic3ViIjo5LCJpYXQiOjE3NTA3MzE2MzMsImV4cCI6MTc1MDczNTIzM30.3CJF_Es6B0ujVR5KCfoxfc_AMRriczWGWls5ZZ73cWc
