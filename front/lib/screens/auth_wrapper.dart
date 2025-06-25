@@ -19,7 +19,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   Future<void> _checkLoginAndTutorialStatus() async {
-    final isLoggedIn = await _authService.isLoggedIn();
+    final isLoggedIn = await _authService.getToken() != null;
     if (mounted) {
       if (isLoggedIn) {
         final prefs = await SharedPreferences.getInstance();
